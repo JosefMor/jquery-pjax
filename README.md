@@ -70,7 +70,6 @@ The browser takes care of `<body>` resources automatically when the correspondin
 Resources from `<head>` should be managed by PJAX JS.
 `<link rel="stylesheet">` is an exception and should be managed by JS application (not PJAX), cause it also “contains” program logic (visibility, positioning, transitions etc.) and loading CSS files at PJAX request is against main goal of PJAX (CSS load would occur after PJAX response received and thus CSS loading should start before PJAX request and hopefully will end just before PJAX inserts new contents to the page).
 
-Websites’ program logic is a complex part. PJAX itself is part of websites’ program logic. So, i think PJAX only needs to have a good API to interact with the web application, but is not responsible of loading and running any code on server requests or history state changes outside explicit API interactions.
 -----
 ### The response to PJAX request should be something like:
 ```
