@@ -51,24 +51,24 @@ HTML response could also inclulde some meta information of the requested page. T
 -----
 
 ### An HTML document has at least four components:
-1. visible contents (<body>)
-2. properties (<meta>, <title>, <!doctype>, some <link> tags)
-3. resources (<link rel="stylesheet">, <link rel=”icon”>, <img />, ...)
-4. behavior or program logic (<script>)
+1. visible contents (`<body>`)
+2. properties (`<meta>`, `<title>`, `<!doctype>`, some `<link>` tags)
+3. resources (`<link rel="stylesheet">`, `<link rel=”icon”>`, <img />, ...)
+4. behavior or program logic (`<script>`)
 
 PJAX should take care of all these aspects.
 PJAX main goal is to speed up browsing the web site by loading only the different/missing parts of the document and reusing the loaded ones.
 
 At each PJAX request the following should happen with each of the documents' components:
 
-Only a piece of <body> is loaded from server and replaced into the document at the corresponding position.
+Only a piece of `<body>` is loaded from server and replaced into the document at the corresponding position.
 
-Some properties of the document are common to the hole web site, but some (like <title> and some <meta>) are specific to each document/uri. If server is “aware” of PJAX and serves document specific meta information in PJAX responses, PJAX (JS part) should replace this meta information in the document, correspondingly.
+Some properties of the document are common to the hole web site, but some (like `<title>` and some `<meta>`) are specific to each document/uri. If server is “aware” of PJAX and serves document specific meta information in PJAX responses, PJAX (JS part) should replace this meta information in the document, correspondingly.
 
-Some resources are located in <head>, some in <body> of the document.
-The browser takes care of <body> resources automatically when the corresponding html code is inserted into <body> by PJAX.
-Resources from <head> should be managed by PJAX JS.
-<link rel="stylesheet"> is an exception and should be managed by JS application (not PJAX), cause it also “contains” program logic (visibility, positioning, transitions etc.) and loading CSS files at PJAX request is against main goal of PJAX (CSS load would occur after PJAX response received and thus CSS loading should start before PJAX request and hopefully will end just before PJAX inserts new contents to the page).
+Some resources are located in `<head>`, some in `<body>` of the document.
+The browser takes care of `<body>` resources automatically when the corresponding html code is inserted into `<body>` by PJAX.
+Resources from `<head>` should be managed by PJAX JS.
+`<link rel="stylesheet">` is an exception and should be managed by JS application (not PJAX), cause it also “contains” program logic (visibility, positioning, transitions etc.) and loading CSS files at PJAX request is against main goal of PJAX (CSS load would occur after PJAX response received and thus CSS loading should start before PJAX request and hopefully will end just before PJAX inserts new contents to the page).
 
 Websites’ program logic is a complex part. PJAX itself is part of websites’ program logic. So, i think PJAX only needs to have a good API to interact with the web application, but is not responsible of loading and running any code on server requests or history state changes outside explicit API interactions.
 -----
