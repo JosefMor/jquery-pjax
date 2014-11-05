@@ -1,4 +1,95 @@
-# pjax
+# pjax - extended version
+
+## Merged version with duzun extensions
+[Duzun](https://github.com/duzun/jquery-pjax)
+see "duzun" in code comments
+-----
+
+** If you don't need this extensions use defunkt version
+[Defunkt](https://github.com/defunkt/jquery-pjax) **
+
+
+-----
+## Duzun changes:
+
+### Server side JS variables
+
+Sometimes you might need to send some data from server along with HTML contents. This can be done by sending `X-PJAX-Vars` response header which contains JSON encoded values. These values are saved with state as $.pjax.state.vars. You can access them with `options.vars`, no matter whether it is a fresh request or popstate.
+
+``` ruby
+require 'json'
+if request.headers['X-PJAX']
+  my_vars = {:user => "in"}
+  response.headers['X-PJAX-Vars'] = JSON.generate(my_vars)
+end
+```
+
+### Client redirect
+
+Using a `Location: url` header would redirect just the pjax request to a new location and load contents from there.
+Instead use `X-PJAX-Location` response header to instruct pjax to make a full page redirect.
+
+``` ruby
+require 'json'
+if request.headers['X-PJAX']
+  response.headers['X-PJAX-Location'] = "https://some.new.location"
+else
+  response.headers['Location'] = "https://some.new.location"
+end
+```
+
+You can handle the redirect with `options.redirect_handler(new_location, options, xhr)` method (for ex. to display a message and a loader).
+
+### `<title>`, `<meta>` and `<link>` tags
+
+HTML response could also inclulde some meta information of the requested page. This meta can be sent with the contents, enclosed in `<head>` tag, as in a common HTML document.
+
+`<link rel="stylesheet" />` is ignored. Load all your stylesheets at page load or dynamically using JS.
+
+`<meta class="pjax" />` and `<link class="pjax" />` tags are automatically removed at pjax request. This is intended to mark metas that belong to on specific page only.
+
+-----
+
+### An HTML document has at least four components:
+1. visible contents (<body>)
+2. properties (<meta>, <title>, <!doctype>, some <link> tags)
+3. resources (<link rel="stylesheet">, <link rel=”icon”>, <img />, ...)
+4. behavior or program logic (<script>)
+
+PJAX should take care of all these aspects.
+PJAX main goal is to speed up browsing the web site by loading only the different/missing parts of the document and reusing the loaded ones.
+
+At each PJAX request the following should happen with each of the documents' components:
+
+Only a piece of <body> is loaded from server and replaced into the document at the corresponding position.
+
+Some properties of the document are common to the hole web site, but some (like <title> and some <meta>) are specific to each document/uri. If server is “aware” of PJAX and serves document specific meta information in PJAX responses, PJAX (JS part) should replace this meta information in the document, correspondingly.
+
+Some resources are located in <head>, some in <body> of the document.
+The browser takes care of <body> resources automatically when the corresponding html code is inserted into <body> by PJAX.
+Resources from <head> should be managed by PJAX JS.
+<link rel="stylesheet"> is an exception and should be managed by JS application (not PJAX), cause it also “contains” program logic (visibility, positioning, transitions etc.) and loading CSS files at PJAX request is against main goal of PJAX (CSS load would occur after PJAX response received and thus CSS loading should start before PJAX request and hopefully will end just before PJAX inserts new contents to the page).
+
+Websites’ program logic is a complex part. PJAX itself is part of websites’ program logic. So, i think PJAX only needs to have a good API to interact with the web application, but is not responsible of loading and running any code on server requests or history state changes outside explicit API interactions.
+-----
+### The response to PJAX request should be something like:
+```
+<html>
+<head>
+<title>...</title>
+<meta name="..." content="..." />
+<meta http-equiv="..." content="..." />
+<meta property="og:site_name" content="..." />
+</head>
+
+<body>
+...
+</body>
+</html>
+```
+
+# pajax readme
+-----
 
 
             .--.
